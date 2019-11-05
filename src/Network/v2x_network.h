@@ -9,8 +9,8 @@
 #define DebugSerial Serial
 #define NetSerial Serial2
 
-#include <TinyGsmClient.h>
-#include <PubSubClient.h>
+#include "src/vendor/TinyGSM/src/TinyGsmClient.h"
+#include "src/vendor/PubSubClient/src/PubSubClient.h"
 
 namespace V2X_NETWORK
 {
