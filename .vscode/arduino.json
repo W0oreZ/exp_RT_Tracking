@@ -1,7 +1,7 @@
 {
     "board": "STM32:stm32:GenF1",
     "configuration": "pnum=BLUEPILL_F103C8B,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,rtlib=nano",
-    "sketch": "v2x_arduino.ino",
+    "sketch": "exp_RT_Tracking.ino",
     "programmer": "AVRISP mkII",
     "port": "COM3",
     "output": "./build/"
