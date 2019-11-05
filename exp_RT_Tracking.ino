@@ -1,5 +1,3 @@
-#include "STM32FreeRTOS.h"
-
 #include "globals.h"
 #include "src/Network/v2x_network.h"
 #include "src/Blink/v2x_blink.h"
