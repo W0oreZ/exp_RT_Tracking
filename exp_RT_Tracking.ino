@@ -1,15 +1,16 @@
 #include "globals.h"
-#include "src/Network/v2x_network.h"
-#include "src/Blink/v2x_blink.h"
+
+#include "src/Controller/v2x_controller.h"
+
 
 void setup() 
 {
-  DebugSerial.begin(115200);
-  NetSerial.begin(115200);
-  while(!NetSerial){;}
+  Serial.begin(115200);
+  while(!Serial);
+
+  Serial.println("V2X PROGRAME STARTING");
   
-  xTaskCreate(V2X_NETWORK::main, (const portCHAR *)"NET_TASK", 2048, NULL, 2, &v2x_network_handler);
-  xTaskCreate(V2X_BLINK::main, (const portCHAR *)"BLINK_TASK", 128, NULL, 2, &v2x_blink_handler);
+  xTaskCreate(V2X_CONTROLLER::main, (const portCHAR *)"CONTROLLER", 512, NULL, 2, NULL);
 
   vTaskStartScheduler();
   while(1);
