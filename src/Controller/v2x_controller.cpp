@@ -3,6 +3,7 @@
 //STATE VARIABLES
 bool PC_CONNECTION;
 bool BLINK_STATUS = false;
+bool GPS_STATUS = false;
 
 void V2X_CONTROLLER::setup()
 {
@@ -11,6 +12,7 @@ void V2X_CONTROLLER::setup()
 
 void V2X_CONTROLLER::loop()
 {
+  V2X_CONTROLLER::gpsTaskHandler();
   V2X_CONTROLLER::pcTaskHandler();
   V2X_CONTROLLER::blinkTaskHandler();
 }
@@ -81,5 +83,15 @@ void V2X_CONTROLLER::blinkTaskHandler()
       xTaskCreate(V2X_BLINK::main, (const portCHAR *)"BLINK_TASK", 128, NULL, 2, NULL);
       BLINK_STATUS = true;
     }
+  }
+}
+
+void V2X_CONTROLLER::gpsTaskHandler()
+{
+  if(!GPS_STATUS)
+  {
+    Serial.println("Controller Starting GPS Task");
+    xTaskCreate(V2X_GPS::main, (const portCHAR *)"GPS_TASK", 1024, NULL, 2, NULL);
+    GPS_STATUS = true;
   }
 }
