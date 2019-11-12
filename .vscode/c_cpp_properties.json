@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\elkhadiri\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\**",
+                "C:\\Users\\elkhadiri\\AppData\\Local\\Arduino15\\packages\\STM32\\hardware\\stm32\\1.7.0\\**",
+                "${workspaceFolder}/**",
+                "C:\\Users\\elkhadiri\\Documents\\Arduino\\libraries\\**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.17763.0",
+            "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/cl.exe",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}",
+            "forcedInclude": [
+                "C:\\Users\\elkhadiri\\AppData\\Local\\Arduino15\\packages\\STM32\\hardware\\stm32\\1.7.0\\cores\\arduino\\Arduino.h",
+                "${workspaceFolder}/src"
+            ]
+        }
+    ],
+    "version": 4
+}
