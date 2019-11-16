@@ -8,13 +8,17 @@ TinyGsmClient client(modem);
 PubSubClient mqtt(client);
 
 long lastReconnectAttempt = 0;
+long lastTransmition = 0;
 
-const char* apn = "www.inwi.ma";
-const char* gprsUser = "";
-const char* gprsPass = "";
-const char* broker = "41.140.242.182";
+char* apn = "www.inwi.ma";
+char* gprsUser = "";
+char* gprsPass = "";
+char* broker = "41.140.242.182";
 int port = 1338;
-const char* topic = "eXPTracker";
+char* DeviceID = "expV010_0001";
+char* topic = "exp/v010/data";
+char* cmdTopic = "expV010_0001/cmd";
+String imei = "";
 
 void V2X_NETWORK::setup()
 {
@@ -25,13 +29,15 @@ void V2X_NETWORK::setup()
   gprsPass = "";
   broker = "41.140.242.182";
   port = 1338;
-  topic = "eXPTracker";
+  topic = "exp/v010/data";
 
   init_Modem();
+  modem.enableGPS();
 }
 
 void V2X_NETWORK::loop()
 {
+  unsigned long time = millis();
   if (!mqtt.connected()) 
   {
     DebugSerial.println("=== NOT CONNECTED ===");
@@ -43,8 +49,66 @@ void V2X_NETWORK::loop()
         lastReconnectAttempt = 0;
       }
     }
-    vTaskDelay( 100 / portTICK_PERIOD_MS );
+    vTaskDelay( 10 / portTICK_PERIOD_MS );
   }
+
+  if(true)
+  {
+    //String gpsData = modem.getGPSraw();
+    float lat,lng,speed;
+    int alt,gsmlev,gpslev;
+    int y,m,d,hh,mm,ss;
+    modem.getGPS(&lat,&lng,&speed,&alt,&gsmlev,&gpslev);
+    modem.getGPSTime(&y,&m,&d,&hh,&mm,&ss);
+    String dt = String(y)+"-"+String(m)+"-"+String(d)+" "+String(hh)+":"+String(mm)+":"+String(ss);
+    String gpsData = "";
+    gpsData += "{\"imei\":\""+ imei + "\",";
+    gpsData += "\"dt\":\""+ dt + "\",";
+    gpsData += "\"lat\":"+ String(lat) + ",";
+    gpsData += "\"lng\":"+ String(lng) + ",";
+    gpsData += "\"speed\":"+ String(speed) + ",";
+    gpsData += "\"alt\":"+ String(alt) + ",";
+    gpsData += "\"gsmlev\":"+ String(gsmlev) + ",";
+    gpsData += "\"gpslev\":"+ String(gpslev) + "}";
+    //DebugSerial.println("GPS DATA : "+gpsData);
+    byte buffer[2048];
+    gpsData.getBytes(buffer,gpsData.length()+1);
+    for (int i = 0; i <= gpsData.length(); i++)
+    {
+      Serial.write(buffer[i]);
+    }
+    Serial.println(" ");
+    
+    if(mqtt.beginPublish(topic,gpsData.length()+1,false) == 1)
+    {
+      mqtt.write(buffer,gpsData.length()+1);
+      if(mqtt.endPublish()==1)
+      {
+        DebugSerial.println("SEND OK");
+        lastTransmition = time;
+      }
+      else
+      {
+        DebugSerial.println("SEND FAIL");
+      }
+    }
+    
+    
+    /*
+    char buffer[1024];
+    gpsData.toCharArray(buffer, 1023);
+    if(mqtt.publish(topic, buffer))
+    {
+      DebugSerial.println("SEND OK");
+      lastTransmition = time;
+    }
+    else
+    {
+      DebugSerial.println("SEND FAIL");
+    }
+    */
+  }
+
   mqtt.loop();
 }
 
@@ -59,6 +123,8 @@ void init_Modem()
   String modemInfo = modem.getModemInfo();
   DebugSerial.print("Modem Info: ");
   DebugSerial.println(modemInfo);
+
+  imei = modem.getIMEI();
 
   modem.gprsConnect(apn, gprsUser, gprsPass);
   DebugSerial.print("Waiting for network...");
@@ -106,19 +172,21 @@ boolean mqttConnect()
 
   // Connect to MQTT Broker
   //boolean status = mqtt.connect("exp101", "exp101", "6482");
-  boolean status = mqtt.connect("exp101");
+  boolean status = mqtt.connect(DeviceID);
 
   if (status == false) {
     DebugSerial.println(" fail");
     return false;
   }
   DebugSerial.println(" success");
-  //mqtt.publish(pubTopic, "exp101 started");
-  mqtt.subscribe(topic);
+  mqtt.publish("etrack", "exp20 connected");
+  mqtt.subscribe(cmdTopic);
+  mqtt.subscribe("EXP/V2X/AUXIN");
   return mqtt.connected();
 }
 
 void V2X_NETWORK::main(void* p){
+  DebugSerial.println("NET Task Started");
   V2X_NETWORK::setup();
 
   for(;;)

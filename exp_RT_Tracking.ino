@@ -10,7 +10,7 @@ void setup()
 
   Serial.println("V2X PROGRAME STARTING");
   
-  xTaskCreate(V2X_CONTROLLER::main, (const portCHAR *)"CONTROLLER", 512, NULL, 2, NULL);
+  xTaskCreate(V2X_CONTROLLER::main, (const portCHAR *)"CONTROLLER", 512, NULL, 1, NULL);
 
   vTaskStartScheduler();
   while(1);
