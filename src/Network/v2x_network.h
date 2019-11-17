@@ -12,6 +12,8 @@
 #include "src/vendor/TinyGSM/src/TinyGsmClient.h"
 #include "src/vendor/PubSubClient/src/PubSubClient.h"
 
+#include "src/utils/formater/formater.h"
+
 namespace V2X_NETWORK
 {
   void main(void* p);

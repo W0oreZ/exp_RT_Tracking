@@ -52,25 +52,9 @@ void V2X_NETWORK::loop()
     vTaskDelay( 10 / portTICK_PERIOD_MS );
   }
 
-  if(true)
+  if(time - lastTransmition > 2000)
   {
-    //String gpsData = modem.getGPSraw();
-    float lat,lng,speed;
-    int alt,gsmlev,gpslev;
-    int y,m,d,hh,mm,ss;
-    modem.getGPS(&lat,&lng,&speed,&alt,&gsmlev,&gpslev);
-    modem.getGPSTime(&y,&m,&d,&hh,&mm,&ss);
-    String dt = String(y)+"-"+String(m)+"-"+String(d)+" "+String(hh)+":"+String(mm)+":"+String(ss);
-    String gpsData = "";
-    gpsData += "{\"imei\":\""+ imei + "\",";
-    gpsData += "\"dt\":\""+ dt + "\",";
-    gpsData += "\"lat\":"+ String(lat) + ",";
-    gpsData += "\"lng\":"+ String(lng) + ",";
-    gpsData += "\"speed\":"+ String(speed) + ",";
-    gpsData += "\"alt\":"+ String(alt) + ",";
-    gpsData += "\"gsmlev\":"+ String(gsmlev) + ",";
-    gpsData += "\"gpslev\":"+ String(gpslev) + "}";
-    //DebugSerial.println("GPS DATA : "+gpsData);
+    String gpsData = FORMATER::GPS_TO_JSON(&modem, imei);
     byte buffer[2048];
     gpsData.getBytes(buffer,gpsData.length()+1);
     for (int i = 0; i <= gpsData.length(); i++)
