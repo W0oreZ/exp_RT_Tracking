@@ -3,6 +3,6 @@
     "configuration": "pnum=BLUEPILL_F103C8B,upload_method=swdMethod,xserial=generic,usb=none,xusb=FS,opt=osstd,rtlib=nano",
     "sketch": "exp_RT_Tracking.ino",
     "programmer": "AVRISP mkII",
-    "port": "COM3",
+    "port": "COM6",
     "output": "./build/"
 }
