@@ -9,7 +9,7 @@
 
 #define AI1 PA4
 #define AI2 PA5
-#define DI1 PB13
+#define DI1 PB12
 #define DI2 PB13
 #define DO1 PB14
 #define DO2 PB15

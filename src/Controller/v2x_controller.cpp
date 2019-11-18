@@ -147,7 +147,7 @@ void V2X_CONTROLLER::ioTaskHandler(String msg)
     else
     {
       Serial.println("Controller Starting IO TASK");
-      xTaskCreate(V2X_SENSORS::main, (const portCHAR *)"IO_TASK", 128, NULL, 2, NULL);
+      xTaskCreate(V2X_SENSORS::main, (const portCHAR *)"IO_TASK", 1024, NULL, 2, NULL);
       IO_STATUS = true;
     }
   }
