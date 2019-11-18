@@ -3,7 +3,7 @@
 #include "src/Controller/v2x_controller.h"
 
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
   while(!Serial);
