@@ -1,8 +1,7 @@
 #ifndef FORMATER_h
 #define FORMATER_h
 
-#define TINY_GSM_MODEM_SIM808
-#include<Arduino.h>
+#include "globals.h"
 #include "src/vendor/TinyGSM/src/TinyGsmClient.h"
 
 namespace FORMATER

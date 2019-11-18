@@ -1,9 +1,7 @@
 #ifndef v2x_blink_h
 #define v2x_blink_h
 
-#include <Arduino.h>
-#include <STM32FreeRTOS.h>
-#include "STM32FreeRTOSConfig.h"
+#include "globals.h"
 
 #define LED_NET PB3
 

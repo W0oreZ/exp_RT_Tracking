@@ -16,7 +16,8 @@ void V2X_SENSORS::setup()
 
 void V2X_SENSORS::loop()
 {
-    IoSerial.println("AI1: " + String((analogRead(AI1) << 2) * (15.0 / 4040))); //max value 15V -> 3.255V -> 1010
+    //IoSerial.println("AI1: " + String((analogRead(AI1) << 2) * (15.0 / (4096 - 56)))); //max value 15V -> 3.255V -> 1010
+    IoSerial.println("AI1: " + String(vAnalogRead(AI1)));
     //IoSerial.println("AI2: " + String(analogRead(AI2) * (3.3 / 4096.0)));
 
     //IoSerial.println("DI1: " + String(digitalRead(DI1)));

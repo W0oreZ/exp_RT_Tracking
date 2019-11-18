@@ -1,15 +1,10 @@
 #ifndef v2x_gps_h
 #define v2x_gps_h
 
-#include <Arduino.h>
-#include <STM32FreeRTOS.h>
-#include "STM32FreeRTOSConfig.h"
-
-#define TINY_GSM_MODEM_SIM808
-//#define TINY_GSM_DEBUG SerialMon
-#define GpsSerial Serial2
-
+#include "globals.h"
 #include "src/vendor/TinyGSM/src/TinyGsmClient.h"
+
+#define GpsSerial Serial2
 
 namespace V2X_GPS
 {

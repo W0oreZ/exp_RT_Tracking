@@ -1,9 +1,6 @@
 #ifndef v2x_controller_h
 #define v2x_controller_h
 
-#include <Arduino.h>
-#include <STM32FreeRTOS.h>
-#include "STM32FreeRTOSConfig.h"
 #include "globals.h"
 
 #include "src/Network/v2x_network.h"
@@ -11,8 +8,6 @@
 #include "src/SerialConnector/v2x_serial_connector.h"
 #include "src/Blink/v2x_blink.h"
 #include "src/Sensors/v2x_sensors.h"
-
-#define FTDI PA15
 
 namespace V2X_CONTROLLER
 {
