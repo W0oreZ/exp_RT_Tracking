@@ -1,9 +1,9 @@
 #include "io.h"
 
-float vAnalogRead(int pin)
+float vAnalogRead(int pin, int offset)
 {
   unsigned int value = (analogRead(pin) << 2);
-  float result = value * ((float)MAX_VOLTAGE_INPUT/(ANALOG_RESOLUTION_UNITS-ANALOG_INPUT_UNITS_OFFSET));
+  float result = value * ((float)MAX_VOLTAGE_INPUT/(ANALOG_RESOLUTION_UNITS-(offset==0?ANALOG_INPUT_UNITS_OFFSET:offset)));
   return result;
 }
 

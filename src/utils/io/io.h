@@ -6,7 +6,7 @@
 #define ANALOG_RESOLUTION_UNITS 4096
 #define ANALOG_INPUT_UNITS_OFFSET 56
 
-float vAnalogRead(int pin); // Returns the value of Voltage in V 
+float vAnalogRead(int pin, int offset = 0); // Returns the value of Voltage in V 
 
 bool vDigitalSwitch(int pin); // returns true if it flips
 
