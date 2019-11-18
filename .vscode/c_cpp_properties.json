@@ -6,7 +6,9 @@
                 "C:\\Users\\elkhadiri\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\**",
                 "C:\\Users\\elkhadiri\\AppData\\Local\\Arduino15\\packages\\STM32\\hardware\\stm32\\1.7.0\\**",
                 "${workspaceFolder}/**",
-                "C:\\Users\\elkhadiri\\Documents\\Arduino\\libraries\\**"
+                "C:\\Users\\elkhadiri\\Documents\\Arduino\\libraries\\**",
+                "C:\\Users\\Yassin\\AppData\\Local\\Arduino15\\packages\\STM32\\hardware\\stm32\\1.7.0\\**",
+                "C:\\Users\\Yassin\\AppData\\Local\\Arduino15\\packages\\STM32\\tools\\**"
             ],
             "defines": [
                 "_DEBUG",
@@ -20,7 +22,8 @@
             "intelliSenseMode": "${default}",
             "forcedInclude": [
                 "C:\\Users\\elkhadiri\\AppData\\Local\\Arduino15\\packages\\STM32\\hardware\\stm32\\1.7.0\\cores\\arduino\\Arduino.h",
-                "${workspaceFolder}/src"
+                "${workspaceFolder}/src",
+                "C:\\Users\\Yassin\\AppData\\Local\\Arduino15\\packages\\STM32\\hardware\\stm32\\1.7.0\\cores\\arduino\\Arduino.h"
             ]
         }
     ],

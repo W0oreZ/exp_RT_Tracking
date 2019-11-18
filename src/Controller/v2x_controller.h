@@ -10,6 +10,7 @@
 #include "src/Gps/v2x_gps.h"
 #include "src/SerialConnector/v2x_serial_connector.h"
 #include "src/Blink/v2x_blink.h"
+#include "src/Sensors/v2x_sensors.h"
 
 #define FTDI PA15
 
@@ -21,6 +22,7 @@ namespace V2X_CONTROLLER
   void blinkTaskHandler(String msg);
   void gpsTaskHandler(String msg);
   void networkTaskHandler(String msg);
+  void ioTaskHandler(String msg);
   
   //TASK CORE FUNCTIONS
   void main(void* p);

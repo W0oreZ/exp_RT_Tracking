@@ -5,7 +5,7 @@ HardwareSerial Serial3(PB11, PB10);
 #include "src/Controller/v2x_controller.h"
 
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
   while(!Serial);
