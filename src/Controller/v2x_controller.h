@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <STM32FreeRTOS.h>
 #include "STM32FreeRTOSConfig.h"
+#include "globals.h"
 
 #include "src/Network/v2x_network.h"
 #include "src/Gps/v2x_gps.h"

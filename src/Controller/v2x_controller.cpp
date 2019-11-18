@@ -122,10 +122,18 @@ void V2X_CONTROLLER::networkTaskHandler(String msg)
     }
     else
     {
+      SIM_CONFIG p;
+      p.apn = "www.inwi.ma";
+      p.broker = "41.140.242.182";
+      p.port = 1338;
+      p.interval = 5000;
+      p.gprsUser = "";
+      p.gprsPass = "";
+
       Serial.println("Controller Starting NET TASK");
       Serial2.begin(115200);
       while(!Serial2);
-      xTaskCreate(V2X_NETWORK::main, (const portCHAR *)"NET_TASK", 2048, NULL, 2, NULL);
+      xTaskCreate(V2X_NETWORK::main, (const portCHAR *)"NET_TASK", 2048, (void*)(&p), 2, NULL);
       NET_STATUS = true;
     }
   }

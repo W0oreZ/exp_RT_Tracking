@@ -4,6 +4,16 @@
 #include <STM32FreeRTOS.h>
 #include "STM32FreeRTOSConfig.h"
 
-HardwareSerial Serial2(PA3, PA2);
-HardwareSerial Serial3(PB11, PB10);
+
+
+struct SIM_CONFIG
+{ 
+  char* apn;
+  char* gprsUser;
+  char* gprsPass;
+  char* broker;
+  int port;
+  long interval;
+};
+
 #endif

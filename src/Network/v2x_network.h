@@ -1,5 +1,8 @@
 #ifndef v2x_network_h
 #define v2x_network_h
+#include <Arduino.h>
+#include <STM32FreeRTOS.h>
+#include "globals.h"
 
 #define TINY_GSM_MODEM_SIM808
 //#define TINY_GSM_DEBUG SerialMon
@@ -18,7 +21,7 @@ namespace V2X_NETWORK
 {
   void main(void* p);
 
-  void setup();
+  void setup(SIM_CONFIG* conf);
   void loop();
 }
 

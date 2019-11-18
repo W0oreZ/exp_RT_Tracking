@@ -1,11 +1,10 @@
 #include "src/Network/v2x_network.h"
 
-#include <Arduino.h>
-#include <STM32FreeRTOS.h>
-
 TinyGsm modem(NetSerial);
 TinyGsmClient client(modem);
 PubSubClient mqtt(client);
+
+SIM_CONFIG config;
 
 long lastReconnectAttempt = 0;
 long lastTransmition = 0;
@@ -20,9 +19,16 @@ char* topic = "exp/v010/data";
 char* cmdTopic = "expV010_0001/cmd";
 String imei = "";
 
-void V2X_NETWORK::setup()
+void V2X_NETWORK::setup(SIM_CONFIG* conf)
 {
   pinMode(PB3, OUTPUT);
+
+  config.apn = conf->apn;
+  config.gprsUser = conf->gprsUser;
+  config.gprsPass = conf->gprsPass;
+  config.broker = conf->broker;
+  config.port = conf->port;
+  config.interval = conf->interval;
 
   apn = "www.inwi.ma";
   gprsUser = "";
@@ -52,7 +58,7 @@ void V2X_NETWORK::loop()
     vTaskDelay( 10 / portTICK_PERIOD_MS );
   }
 
-  if(time - lastTransmition > 2000)
+  if(time - lastTransmition > config.interval)
   {
     String gpsData = FORMATER::GPS_TO_JSON(&modem, imei);
     byte buffer[2048];
@@ -134,7 +140,7 @@ void init_Modem()
     DebugSerial.println("GPRS connected");
   }
 
-  mqtt.setServer(broker, port);
+  mqtt.setServer(config.broker, config.port);
   mqtt.setCallback(MessageHandler);
 }
 
@@ -170,8 +176,9 @@ boolean mqttConnect()
 }
 
 void V2X_NETWORK::main(void* p){
+
   DebugSerial.println("NET Task Started");
-  V2X_NETWORK::setup();
+  V2X_NETWORK::setup((SIM_CONFIG*)p);
 
   for(;;)
   {
