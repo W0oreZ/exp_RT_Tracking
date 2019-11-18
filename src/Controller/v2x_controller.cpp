@@ -21,10 +21,10 @@ void V2X_CONTROLLER::loop()
     Serial.println("Received : " + msg);
   }
 
-  //V2X_CONTROLLER::networkTaskHandler(msg);
+  V2X_CONTROLLER::networkTaskHandler(msg);
   //V2X_CONTROLLER::gpsTaskHandler(msg);
   //V2X_CONTROLLER::pcTaskHandler();
-  //V2X_CONTROLLER::blinkTaskHandler(msg);
+  V2X_CONTROLLER::blinkTaskHandler(msg);
   V2X_CONTROLLER::ioTaskHandler(msg);
 }
 
