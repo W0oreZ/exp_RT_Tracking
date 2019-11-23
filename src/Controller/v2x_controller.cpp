@@ -6,6 +6,7 @@ bool BLINK_STATUS = false;
 bool GPS_STATUS = false;
 bool NET_STATUS = false;
 bool IO_STATUS = false;
+bool RTC_STATUS = false;
 
 void V2X_CONTROLLER::setup()
 {
@@ -21,10 +22,11 @@ void V2X_CONTROLLER::loop()
     Serial.println("Received : " + msg);
   }
 
+  V2X_CONTROLLER::rtcTaskHandler(msg);
   V2X_CONTROLLER::networkTaskHandler(msg);
   //V2X_CONTROLLER::gpsTaskHandler(msg);
   //V2X_CONTROLLER::pcTaskHandler();
-  V2X_CONTROLLER::blinkTaskHandler(msg);
+  //V2X_CONTROLLER::blinkTaskHandler(msg);
   V2X_CONTROLLER::ioTaskHandler(msg);
 }
 
@@ -157,6 +159,26 @@ void V2X_CONTROLLER::ioTaskHandler(String msg)
       Serial.println("Controller Starting IO TASK");
       xTaskCreate(V2X_SENSORS::main, (const portCHAR *)"IO_TASK", 1024, NULL, 2, NULL);
       IO_STATUS = true;
+    }
+  }
+}
+
+void V2X_CONTROLLER::rtcTaskHandler(String msg)
+{
+  if(msg == "rtc")
+  {
+    if(RTC_STATUS)
+    {
+      Serial.println("Controller Closing RTC TASK");
+      RTC_STATUS = false;
+      TaskHandle_t handle = xTaskGetHandle("RTC_TASK");
+      vTaskDelete(handle);
+    }
+    else
+    {
+      Serial.println("Controller Starting RTC TASK");
+      xTaskCreate(V2X_RTC::main, (const portCHAR *)"RTC_TASK", 1024, NULL, 2, NULL);
+      RTC_STATUS = true;
     }
   }
 }

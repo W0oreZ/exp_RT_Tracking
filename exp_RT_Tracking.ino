@@ -1,5 +1,5 @@
 #include "globals.h"
-HardwareSerial Serial2(PA3, PA2);
+HardwareSerial Serial2(PA3, PA2);//serial1 arduino SIM module
 HardwareSerial Serial3(PB11, PB10);
 
 #include "src/Controller/v2x_controller.h"

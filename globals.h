@@ -13,8 +13,10 @@
 #define WIR PA8     //RFID
 #define FTDI PA15   //PC Connection Digital Detector
 #define LED_NET PB3 //Led indicator
+#define RFID PA8    //RFID reader
 
-#define TINY_GSM_MODEM_SIM808     //SIM module Version
+//#define TINY_GSM_MODEM_SIM808     //SIM module Version
+#define TINY_GSM_MODEM_A7         //A7 Module Version
 #define GSM_AUTOBAUD_MIN 115200   //BAUDRATE 
 #define GSM_AUTOBAUD_MAX 115200   //BAUDRATE
 

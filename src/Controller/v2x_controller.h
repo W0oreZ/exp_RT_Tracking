@@ -3,6 +3,7 @@
 
 #include "globals.h"
 
+#include "src/Time/rtc_time.h"
 #include "src/Network/v2x_network.h"
 #include "src/Gps/v2x_gps.h"
 #include "src/SerialConnector/v2x_serial_connector.h"
@@ -14,6 +15,7 @@ namespace V2X_CONTROLLER
   //Controller Methods
   void InitPcTask();
   void pcTaskHandler();
+  void rtcTaskHandler(String msg);
   void blinkTaskHandler(String msg);
   void gpsTaskHandler(String msg);
   void networkTaskHandler(String msg);
