@@ -1,36 +1,35 @@
 #include "v2x_sensors.h"
 
-
 OneWire ibutton(RFID);
+
 byte address[8];
-String rf = "";
+String rf = "00 00 00 00 00 00 00";
 
 void V2X_SENSORS::setup()
 {
-    IoSerial.println("Sensors");
-
-    pinMode(AI1, INPUT_ANALOG);
-    pinMode(AI2, INPUT_ANALOG);
-    pinMode(DI1, INPUT);
-    pinMode(DI2, INPUT);
-    pinMode(DO1, OUTPUT);
-    pinMode(DO2, OUTPUT);
-
+	pinMode(FTDI, INPUT);
+	pinMode(AI1, INPUT_ANALOG);
+	pinMode(AI2, INPUT_ANALOG);
+	pinMode(DI1, INPUT);
+	pinMode(DI2, INPUT);
+	pinMode(DO1, OUTPUT);
+	pinMode(DO2, OUTPUT);
 }
 
 void V2X_SENSORS::loop()
 {
-  IoSerial.println("AI1: " + String(vAnalogRead(AI1)));
-  IoSerial.println("AI2: " + String(vAnalogRead(AI2)));
-  IoSerial.println("DI1: " + String(digitalRead(DI1)));
-  IoSerial.println("DI2: " + String(digitalRead(DI2)));
+	if(!V2X_SENSORS::rfidRead(&rf))
+	{
+		rf = "00 00 00 00 00 00 00";
+	}
+	
+	vSensorLog("ANALOGIQUE","ai1",String(vAnalogRead(AI1)));
+	vSensorLog("ANALOGIQUE","ai2",String(vAnalogRead(AI2)));
+	vSensorLog("DIGITAL","di1",String(vAnalogRead(DI1)));
+	vSensorLog("DIGITAL","di2",String(vAnalogRead(DI2)));
+	vSensorLog("RFID","rfid",rf);
 
-  if(V2X_SENSORS::rfidRead(&rf))
-  {
-    IoSerial.println("RFID: " + rf);
-  }
-  
-  vTaskDelay(500);
+  vTaskDelay(1000);
 }
 
 void V2X_SENSORS::main(void* p)

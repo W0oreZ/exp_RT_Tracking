@@ -12,8 +12,8 @@
 
 namespace V2X_CONTROLLER
 {
-  //Controller Methods
-  void InitPcTask();
+  //Controller Handlers
+  void cmdHandler(String msg);
   void pcTaskHandler();
   void rtcTaskHandler(String msg);
   void blinkTaskHandler(String msg);

@@ -4,10 +4,12 @@ TinyGsm modem(NetSerial);
 TinyGsmClient client(modem);
 PubSubClient mqtt(client);
 
-SIM_CONFIG config;
+SIM_CONFIG simconfig;
 
 long lastReconnectAttempt = 0;
 long lastTransmition = 0;
+
+
 
 char* apn = "www.inwi.ma";
 char* gprsUser = "";
@@ -22,13 +24,27 @@ String imei = "";
 void V2X_NETWORK::setup(SIM_CONFIG* conf)
 {
   pinMode(PB3, OUTPUT);
+  simconfig = *conf;
 
-  config.apn = conf->apn;
-  config.gprsUser = conf->gprsUser;
-  config.gprsPass = conf->gprsPass;
-  config.broker = conf->broker;
-  config.port = conf->port;
-  config.interval = conf->interval;
+  Serial.println("Configuration Loaded :");
+  Serial.print("APN : ");
+  Serial.print(simconfig.apn);
+  Serial.println("");
+  Serial.print("USER : ");
+  Serial.print(simconfig.gprsUser);
+  Serial.println("");
+  Serial.print("PASS : ");
+  Serial.print(simconfig.gprsPass);
+  Serial.println("");
+  Serial.print("SERVER : ");
+  Serial.print(simconfig.broker);
+  Serial.println("");
+  Serial.print("PORT : ");
+  Serial.print(simconfig.port);
+  Serial.println("");
+  Serial.print("INTERVAL : ");
+  Serial.print(simconfig.interval);
+  Serial.println("");
 
   apn = "www.inwi.ma";
   gprsUser = "";
@@ -58,7 +74,7 @@ void V2X_NETWORK::loop()
     vTaskDelay( 10 / portTICK_PERIOD_MS );
   }
 
-  if(time - lastTransmition > config.interval)
+  if(time - lastTransmition > simconfig.interval)
   {
     String gpsData = FORMATER::GPS_TO_JSON(&modem, imei);
     byte buffer[2048];
@@ -107,8 +123,8 @@ void init_Modem()
   DebugSerial.println("MQTT Task Started !");
 
   DebugSerial.println("Initializing modem...");
-  modem.restart();
-  // modem.init();
+  //modem.restart();
+  modem.init();
 
   String modemInfo = modem.getModemInfo();
   DebugSerial.print("Modem Info: ");
@@ -140,7 +156,7 @@ void init_Modem()
     DebugSerial.println("GPRS connected");
   }
 
-  mqtt.setServer(config.broker, config.port);
+  mqtt.setServer(simconfig.broker, simconfig.port);
   mqtt.setCallback(MessageHandler);
 }
 

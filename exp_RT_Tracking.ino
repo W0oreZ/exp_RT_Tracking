@@ -1,18 +1,16 @@
 #include "globals.h"
-HardwareSerial Serial2(PA3, PA2);//serial1 arduino SIM module
-HardwareSerial Serial3(PB11, PB10);
-
 #include "src/Controller/v2x_controller.h"
 
 
 void setup()
 {
   Serial.begin(115200);
+  Serial2.begin(115200);
   while(!Serial);
 
-  Serial.println("V2X PROGRAME STARTING");
+  vLog("V2X PROGRAME STARTING");
   
-  xTaskCreate(V2X_CONTROLLER::main, (const portCHAR *)"CONTROLLER", 512, NULL, 1, NULL);
+  xTaskCreate(V2X_CONTROLLER::main, (const portCHAR *)"CONTROLLER", 1024, NULL, 1, NULL);
 
   vTaskStartScheduler();
   while(1);

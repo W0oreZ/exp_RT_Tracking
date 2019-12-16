@@ -1,16 +1,34 @@
 #include "v2x_controller.h"
 
 //STATE VARIABLES
-bool PC_CONNECTION;
-bool BLINK_STATUS = false;
-bool GPS_STATUS = false;
-bool NET_STATUS = false;
-bool IO_STATUS = false;
-bool RTC_STATUS = false;
+extern bool PC_CONNECTION = false;
+extern bool BLINK_STATUS = false;
+extern bool GPS_STATUS = false;
+extern bool NET_STATUS = false;
+extern bool IO_STATUS = false;
+extern bool RTC_STATUS = false;
+SIM_CONFIG p;
 
 void V2X_CONTROLLER::setup()
 {
-  //V2X_CONTROLLER::InitPcTask();
+  if(!vDeserialize(&p))
+  {
+    vLog("No Configuration Detected");
+    vLog("Creating Factory Default Configuration");
+    strcpy(p.apn,"www.meditel.ma");
+    strcpy(p.broker,"41.140.242.182");
+    p.port = 1338;
+    p.interval = 5000;
+    strcpy(p.gprsPass,"");
+    strcpy(p.gprsUser,"");
+
+    vLog("Saving Configuration");
+    vSerialize(&p);
+  }
+  else
+  {
+    vLog("Configuration Loaded");
+  }
 }
 
 void V2X_CONTROLLER::loop()
@@ -19,19 +37,60 @@ void V2X_CONTROLLER::loop()
   if(Serial.available()>0)
   {
     msg = Serial.readString();
-    Serial.println("Received : " + msg);
+    Serial.println("\n>" + msg + "\n");
   }
 
   V2X_CONTROLLER::rtcTaskHandler(msg);
   V2X_CONTROLLER::networkTaskHandler(msg);
-  //V2X_CONTROLLER::gpsTaskHandler(msg);
+  V2X_CONTROLLER::gpsTaskHandler(msg);
   //V2X_CONTROLLER::pcTaskHandler();
-  //V2X_CONTROLLER::blinkTaskHandler(msg);
+  V2X_CONTROLLER::blinkTaskHandler(msg);
   V2X_CONTROLLER::ioTaskHandler(msg);
+
+  if(msg != "net" && msg != "io" && msg != "rtc" && msg != "blink" && msg != "gps")
+    V2X_CONTROLLER::cmdHandler(msg);
+}
+
+void V2X_CONTROLLER::cmdHandler(String msg)
+{
+  if(msg == "ee_length")
+    vLog("EEPROM SIZE : "+ String(EEPROM.length()));
+  else if (msg == "ee_show")
+  {
+    vLog("V2X EEPROM");
+    for (int i = 0; i < EEPROM.length(); i++)
+    {
+      Serial.print(String(EEPROM[i],HEX));
+    }
+    Serial.println();
+  }
+  else if (msg=="load_cfg")
+  {
+    vSendConfig(&p);
+  }
+  else if (msg == "infos")
+  {
+    vInfo("version","exp-0.1.7a");
+    vInfo("netId","exTracker101");
+  }
+  else if(msg.indexOf("conf#")>=0)
+  {
+    String payload = "";
+    payload = msg.substring(5);
+    vSetConfig(&p, payload);
+    vLog("Saving Configuration");
+    vSerialize(&p);
+    vSendConfig(&p);
+  }
+  else
+  {
+    if(msg != "")
+      vLog("[MAIN] # Undefined Command.");
+  }
 }
 
 void V2X_CONTROLLER::main(void* p){
-  Serial.println("Controller is Running");
+  vLog("Controller is Running");
 
   V2X_CONTROLLER::setup();
 
@@ -43,12 +102,6 @@ void V2X_CONTROLLER::main(void* p){
   }
 }
 
-void V2X_CONTROLLER::InitPcTask()
-{
-  PC_CONNECTION = false;
-  pinMode(FTDI, INPUT);
-}
-
 void V2X_CONTROLLER::pcTaskHandler()
 {
   int status = digitalRead(FTDI);
@@ -56,7 +109,7 @@ void V2X_CONTROLLER::pcTaskHandler()
   {
     if(!PC_CONNECTION)
     {
-      Serial.println("Controller Starting PC Task");
+      vLog("Controller Starting PC Task");
       xTaskCreate(V2X_SERIAL_CONNECTOR::main, (const portCHAR *)"PC_TASK", 512, NULL, 2, NULL);
       PC_CONNECTION = true;
     }
@@ -65,7 +118,7 @@ void V2X_CONTROLLER::pcTaskHandler()
   {
     if(PC_CONNECTION)
     {
-      Serial.println("Controller Closing PC TASK");
+      vLog("Controller Closing PC TASK");
       PC_CONNECTION = false;
       TaskHandle_t handle = xTaskGetHandle("PC_TASK");
       vTaskDelete(handle);
@@ -79,14 +132,14 @@ void V2X_CONTROLLER::blinkTaskHandler(String msg)
   {
     if(BLINK_STATUS)
     {
-      Serial.println("Controller Closing Blink TASK");
+      vLog("Controller Closing Blink TASK");
       BLINK_STATUS = false;
       TaskHandle_t handle = xTaskGetHandle("BLINK_TASK");
       vTaskDelete(handle);
     }
     else
     {
-      Serial.println("Controller Starting Blink Task");
+      vLog("Controller Starting Blink Task");
       xTaskCreate(V2X_BLINK::main, (const portCHAR *)"BLINK_TASK", 128, NULL, 2, NULL);
       BLINK_STATUS = true;
     }
@@ -99,14 +152,14 @@ void V2X_CONTROLLER::gpsTaskHandler(String msg)
   {
     if(GPS_STATUS)
     {
-      Serial.println("Controller Closing GPS TASK");
+      vLog("Controller Closing GPS TASK");
       GPS_STATUS = false;
       TaskHandle_t handle = xTaskGetHandle("GPS_TASK");
       vTaskDelete(handle);
     }
     else
     {
-      Serial.println("Controller Starting GPS TASK");
+      vLog("Controller Starting GPS TASK");
       xTaskCreate(V2X_GPS::main, (const portCHAR *)"GPS_TASK", 1024, NULL, 2, NULL);
       GPS_STATUS = true;
     }
@@ -119,25 +172,16 @@ void V2X_CONTROLLER::networkTaskHandler(String msg)
   {
     if(NET_STATUS)
     {
-      Serial.println("Controller Closing NET TASK");
+      vLog("Controller Closing NET TASK");
       NET_STATUS = false;
       TaskHandle_t handle = xTaskGetHandle("NET_TASK");
       vTaskDelete(handle);
     }
     else
     {
-      SIM_CONFIG p;
-      p.apn = "www.inwi.ma";
-      p.broker = "41.140.242.182";
-      p.port = 1338;
-      p.interval = 5000;
-      p.gprsUser = "";
-      p.gprsPass = "";
-
-      Serial.println("Controller Starting NET TASK");
-      Serial2.begin(115200);
-      while(!Serial2);
-      xTaskCreate(V2X_NETWORK::main, (const portCHAR *)"NET_TASK", 2048, (void*)(&p), 2, NULL);
+      vLog("Controller Starting NET TASK");
+      while(!Serial2){vLog("waiting for serial2");}
+      xTaskCreate(V2X_NETWORK::main, (const portCHAR *)"NET_TASK", 1024, (void*)(&p), 2, NULL);
       NET_STATUS = true;
     }
   }
@@ -149,14 +193,14 @@ void V2X_CONTROLLER::ioTaskHandler(String msg)
   {
     if(IO_STATUS)
     {
-      Serial.println("Controller Closing IO TASK");
+      vLog("Controller Closing IO TASK");
       IO_STATUS = false;
       TaskHandle_t handle = xTaskGetHandle("IO_TASK");
       vTaskDelete(handle);
     }
     else
     {
-      Serial.println("Controller Starting IO TASK");
+      vLog("Controller Starting IO TASK");
       xTaskCreate(V2X_SENSORS::main, (const portCHAR *)"IO_TASK", 1024, NULL, 2, NULL);
       IO_STATUS = true;
     }
@@ -169,14 +213,14 @@ void V2X_CONTROLLER::rtcTaskHandler(String msg)
   {
     if(RTC_STATUS)
     {
-      Serial.println("Controller Closing RTC TASK");
+      vLog("Controller Closing RTC TASK");
       RTC_STATUS = false;
       TaskHandle_t handle = xTaskGetHandle("RTC_TASK");
       vTaskDelete(handle);
     }
     else
     {
-      Serial.println("Controller Starting RTC TASK");
+      vLog("Controller Starting RTC TASK");
       xTaskCreate(V2X_RTC::main, (const portCHAR *)"RTC_TASK", 1024, NULL, 2, NULL);
       RTC_STATUS = true;
     }
